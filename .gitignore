@@ -1,0 +1,6 @@
+course*.yaml
+lesson-info.yaml
+task*.yaml
+task*.html
+/venv/
+/.idea/
