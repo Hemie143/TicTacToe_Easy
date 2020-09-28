@@ -4,3 +4,6 @@ task*.yaml
 task*.html
 /venv/
 /.idea/
+test_helper.py
+tests.py
+
