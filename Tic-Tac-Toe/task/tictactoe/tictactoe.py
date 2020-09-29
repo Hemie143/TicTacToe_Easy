@@ -1,6 +1,3 @@
-from random import randint, choice
-from copy import deepcopy
-
 
 class Player:
 
@@ -24,12 +21,11 @@ class UserPlayer(Player):
                 print("You should enter numbers!")
             elif x not in self.valid_coords or y not in self.valid_coords:
                 print("Coordinates should be from 1 to 3!")
-            elif grid.read_cell(3 - int(y), int(x) - 1) in "XO":
+            elif grid.read_cell(int(x) - 1, int(y) - 1) in "XO":
                 print("This cell is occupied! Choose another one!")
             else:
                 # Turns
-                # cells[3 - int(y)][int(x) - 1] = player[turn % 2]
-                grid.write_cell(3 - int(y), int(x) - 1, self.symbol)
+                grid.write_cell(int(x) - 1, int(y) - 1, self.symbol)
                 break
 
 class Grid:
@@ -50,6 +46,9 @@ class Grid:
     def init_grid(self):
         self.cells = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
 
+    def write_cell(self, x, y, value):
+        self.cells[x][y] = value
+
     def read_cell(self, x, y):
         return self.cells[x][y]
 
@@ -59,6 +58,7 @@ class Grid:
             grid_line = ' '.join(self.cells[y])
             print(f'| {grid_line} |')
         print("---------")
+
 
     def get_state(self):
         x_count = self.cells[0].count('X') + self.cells[1].count('X') + self.cells[2].count('X')
@@ -99,53 +99,17 @@ class Grid:
 
 class TicTacToe:
 
-    # numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
-
     def __init__(self):
-        self.playerX = None
+        self.playerX = UserPlayer('user', 'X')
         self.playerO = None
         self.grid = Grid()
 
-    @staticmethod
-    def get_player(level, symbol):
-        if level == 'user':
-            return UserPlayer(level, symbol)
-        elif level == 'easy':
-            return AIEasyPlayer(level, symbol)
-        elif level == 'medium':
-            return AIMediumPlayer(level, symbol)
-        elif level == 'hard':
-            return AIHardPlayer(level, symbol)
-
     def run(self):
+        self.grid.input()
         self.grid.print_grid()
-        while not self.grid.win:
-            for player in [self.playerX, self.playerO]:
-                player.play(self.grid)
-                self.grid.print_grid()
-                self.grid.get_state()
-                if 'play' not in self.grid.state:
-                    print(self.grid.state)
-                if self.grid.win:
-                    break
-
-    def run_menu(self):
-        while True:
-            print('Input command:')
-            command = input()
-            if command == 'exit':
-                exit()
-            if command.startswith('start') and command.count(' ') == 2:
-                _, levelX, levelO = command.split(' ')
-                self.playerX = self.get_player(levelX, 'X')
-                self.playerO = self.get_player(levelO, 'O')
-                self.grid.init_grid()
-                self.run()
-            else:
-                print('Bad parameters!')
-            exit()
-
+        self.playerX.play(self.grid)
+        self.grid.print_grid()
 
 game = TicTacToe()
-game.run_menu()
+game.run()
 
