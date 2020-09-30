@@ -41,7 +41,7 @@ class Grid:
 
     def __init__(self):
         self.cells = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
-        self.state = None
+        self.state = 'Game not finished'
 
     def init_grid(self):
         self.cells = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
@@ -56,9 +56,9 @@ class Grid:
         print("---------")
         for y in range(0, 3):
             grid_line = ' '.join(self.cells[y])
+            grid_line = grid_line.replace('_', ' ')
             print(f'| {grid_line} |')
         print("---------")
-
 
     def get_state(self):
         x_count = self.cells[0].count('X') + self.cells[1].count('X') + self.cells[2].count('X')
@@ -67,7 +67,7 @@ class Grid:
             self.state = 'Impossible'
             return self.state
 
-        empty_cell = any([cell == "_" for row in self.cells for cell in row])
+        empty_cell = any([cell == "_"  or cell == " " for row in self.cells for cell in row])
         x3, o3 = False, False
         for coords in self.lines:
             line = [self.cells[x][y] for x, y in coords]
@@ -101,15 +101,20 @@ class TicTacToe:
 
     def __init__(self):
         self.playerX = UserPlayer('user', 'X')
-        self.playerO = None
+        self.playerO = UserPlayer('user', 'O')
         self.grid = Grid()
 
     def run(self):
-        self.grid.input()
+        # self.grid.input()
         self.grid.print_grid()
-        self.playerX.play(self.grid)
-        self.grid.print_grid()
+        while self.grid.state == 'Game not finished':
+            for player in [self.playerX, self.playerO]:
+                player.play(self.grid)
+                self.grid.print_grid()
+                self.grid.get_state()
+                if self.grid.state != 'Game not finished':
+                    break
+        print(self.grid.state)
 
 game = TicTacToe()
 game.run()
-
